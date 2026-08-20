@@ -64,6 +64,7 @@ export default function TaskCard({ task, onSelect, onStatusChange, onDelete, onE
             }`}></span>
             {task.priority}
           </span>
+
         </div>
         
         {/* Metadata Details (Location, Weather, Date) */}
@@ -81,13 +82,13 @@ export default function TaskCard({ task, onSelect, onStatusChange, onDelete, onE
         </div>
       </div>
 
-      {/* Image Preview */}
+      {/* Image Preview - Updated to use object-contain */}
       {task.fileUrl && (
-        <div className="mt-5 overflow-hidden rounded-2xl border border-gray-100 shadow-sm">
+        <div className="mt-5 flex justify-center bg-gray-900/5 rounded-2xl border border-gray-100 p-2 overflow-hidden">
           <img 
             src={task.fileUrl} 
             alt="Task attachment" 
-            className="h-36 w-full object-cover transition-transform duration-500 group-hover:scale-110" 
+            className="h-36 w-auto object-contain rounded-xl transition-transform duration-500 group-hover:scale-105" 
           />
         </div>
       )}

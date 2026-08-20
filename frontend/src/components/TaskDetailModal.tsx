@@ -30,7 +30,7 @@ export default function TaskDetailModal({ task, onClose }: ModalProps) {
       {/* Modal Container - stopPropagation prevents clicks inside from closing it */}
       <div 
         onClick={(e) => e.stopPropagation()}
-        className="relative w-full max-w-2xl rounded-[2rem] bg-white p-8 shadow-[0_20px_60px_-15px_rgba(0,0,0,0.1)] border border-gray-100/50"
+        className="relative w-full max-w-2xl max-h-[90vh] overflow-y-auto rounded-[2rem] bg-white p-8 shadow-[0_20px_60px_-15px_rgba(0,0,0,0.1)] border border-gray-100/50"
       >
         {/* Close Button */}
         <button 
@@ -101,15 +101,15 @@ export default function TaskDetailModal({ task, onClose }: ModalProps) {
           </div>
         </div>
 
-        {/* Image Attachment */}
+        {/* Image Attachment - Updated to show full image using object-contain */}
         {task.fileUrl && (
           <div className="mb-8">
             <span className="mb-3 block text-xs font-bold uppercase tracking-wider text-gray-400">Attachment</span>
-            <div className="overflow-hidden rounded-2xl border border-gray-100 shadow-[0_4px_20px_rgb(0,0,0,0.04)]">
+            <div className="flex justify-center bg-gray-900/5 rounded-2xl border border-gray-100 p-2 overflow-hidden">
               <img 
                 src={task.fileUrl} 
                 alt="Task attachment" 
-                className="h-64 w-full object-cover transition-transform hover:scale-105 duration-700" 
+                className="max-h-80 w-auto object-contain rounded-xl transition-transform hover:scale-[1.02] duration-500" 
               />
             </div>
           </div>

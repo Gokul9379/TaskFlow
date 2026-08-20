@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { useNavigate, useParams, Link } from 'react-router-dom';
-import API from '../api/axios'; // <-- Updated to use central API instance
+import API from '../api/axios';
 import toast from 'react-hot-toast';
 import Navbar from '../components/Navbar';
 
@@ -206,6 +206,20 @@ export default function EditTask() {
               </div>
 
             </div>
+
+            {/* Current Attachment Preview */}
+            {currentFileUrl && !file && (
+              <div className="space-y-1.5 pt-2">
+                <label className="text-[10px] font-bold uppercase tracking-wider text-gray-400 ml-1">Current Attachment</label>
+                <div className="flex justify-center bg-gray-900/5 rounded-2xl border border-gray-100 p-3">
+                  <img 
+                    src={currentFileUrl} 
+                    alt="Current attachment" 
+                    className="max-h-40 w-auto object-contain rounded-xl" 
+                  />
+                </div>
+              </div>
+            )}
 
             <div className="space-y-1.5 pt-2">
               <label className="text-[10px] font-bold uppercase tracking-wider text-gray-500 ml-1">Update Media (Optional)</label>
