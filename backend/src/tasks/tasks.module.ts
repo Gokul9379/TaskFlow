@@ -5,15 +5,16 @@ import { MongooseModule } from '@nestjs/mongoose';
 import { TasksService } from './tasks.service';
 import { TasksController } from './tasks.controller';
 import { Task, TaskSchema } from '../schemas/task.schema';
-import { WeatherModule } from '../weather/weather.module'; // <-- Add this import
+import { WeatherModule } from '../weather/weather.module';
+import { MailService } from '../mail.service'; // <-- 1. Import MailService
 
 @Module({
   imports: [
-    MongooseModule.forFeature([{ name: Task.name, schema: TaskSchema } ,{ name: User.name, schema: UserSchema }]),
+    MongooseModule.forFeature([{ name: Task.name, schema: TaskSchema }, { name: User.name, schema: UserSchema }]),
     WeatherModule,
-    CloudinaryModule, // <-- Add this here
+    CloudinaryModule,
   ],
-  providers: [TasksService],
+  providers: [TasksService, MailService], // <-- 2. Add MailService here
   controllers: [TasksController]
 })
 export class TasksModule {}

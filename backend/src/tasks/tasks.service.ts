@@ -1,9 +1,9 @@
-import { MailerService } from '@nestjs-modules/mailer';
+import { MailService } from '../mail.service';
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
 import { Task } from '../schemas/task.schema';
-import { User } from '../schemas/user.schema'; // <-- 1. Import User Schema
+import { User } from '../schemas/user.schema';
 import { CreateTaskDto } from './dto/create-task.dto';
 import axios from 'axios'; 
 
@@ -11,8 +11,8 @@ import axios from 'axios';
 export class TasksService {
   constructor(
     @InjectModel(Task.name) private taskModel: Model<Task>,
-    @InjectModel(User.name) private userModel: Model<User>, // <-- 2. Inject User Model
-    private readonly mailerService: MailerService,
+    @InjectModel(User.name) private userModel: Model<User>,
+    private readonly mailService: MailService,
   ) {}
 
   async create(userId: string, userEmail: string, createTaskDto: CreateTaskDto): Promise<Task> {
@@ -42,16 +42,15 @@ export class TasksService {
     });
     const savedTask = await newTask.save();
     
-    // --- 3. Check Notification Preference Before Sending ---
+    // --- Check Notification Preference Before Sending ---
     const user = await this.userModel.findById(userId);
     if (user && user.emailNotifications !== false) {
-      this.mailerService.sendMail({
-        to: userEmail,
-        subject: 'New Task Created! 🎉',
-        text: `Hello!\n\nYou successfully created a new task: "${savedTask.title}".\nPriority: ${savedTask.priority}\nLocation: ${savedTask.location}\nWeather: ${weatherString}\n\nGood luck!`,
-      }).catch(err => console.error('Email failed to send:', err));
+      this.mailService.sendEmail(
+        userEmail,
+        'New Task Created! 🎉',
+        `Hello!\n\nYou successfully created a new task: "${savedTask.title}".\nPriority: ${savedTask.priority}\nLocation: ${savedTask.location}\nWeather: ${weatherString}\n\nGood luck!`
+      );
     }
-    // -------------------------------------------------------
 
     return savedTask;
   }
@@ -103,13 +102,12 @@ export class TasksService {
     // --- Check Notification Preference Before Sending ---
     const user = await this.userModel.findById(userId);
     if (user && user.emailNotifications !== false) {
-      this.mailerService.sendMail({
-        to: userEmail,
-        subject: 'Task Updated! ✏️',
-        text: `Hello!\n\nYour task "${updatedTask.title}" has been successfully updated.\nCurrent Status: ${updatedTask.status}\nPriority: ${updatedTask.priority}\n\nKeep up the great work!`,
-      }).catch(err => console.error('Email failed to send:', err));
+      this.mailService.sendEmail(
+        userEmail,
+        'Task Updated! ✏️',
+        `Hello!\n\nYour task "${updatedTask.title}" has been successfully updated.\nCurrent Status: ${updatedTask.status}\nPriority: ${updatedTask.priority}\n\nKeep up the great work!`
+      );
     }
-    // ----------------------------------------------------
 
     return updatedTask;
   }
@@ -124,13 +122,12 @@ export class TasksService {
     // --- Check Notification Preference Before Sending ---
     const user = await this.userModel.findById(userId);
     if (user && user.emailNotifications !== false) {
-      this.mailerService.sendMail({
-        to: userEmail,
-        subject: 'Task Deleted 🗑️',
-        text: `Hello!\n\nYour task "${taskToDelete.title}" has been successfully deleted from your dashboard.`,
-      }).catch(err => console.error('Email failed to send:', err));
+      this.mailService.sendEmail(
+        userEmail,
+        'Task Deleted 🗑️',
+        `Hello!\n\nYour task "${taskToDelete.title}" has been successfully deleted from your dashboard.`
+      );
     }
-    // ----------------------------------------------------
 
     return { message: 'Task deleted successfully' };
   }
