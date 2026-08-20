@@ -1,6 +1,6 @@
 import { useState, useContext } from 'react';
 import { Link } from 'react-router-dom';
-import API from '../api/axios'; // <-- Updated to use central API instance
+import API from '../api/axios';
 import { AuthContext } from '../context/AuthContext';
 
 export default function Login() {
@@ -21,9 +21,9 @@ export default function Login() {
         password,
       });
       
-      // Use the global context to log in, save data, and navigate all at once
+      // Pass the token, email, and the returned name to the global login function
       if (auth) {
-        auth.login(response.data.access_token, email);
+        auth.login(response.data.access_token, email, response.data.name);
       }
       
     } catch (err) {

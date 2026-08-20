@@ -19,7 +19,11 @@ export class AuthService {
     const hashedPassword = await bcrypt.hash(pass, 10);
     const user = await this.usersService.create({ name, email, password: hashedPassword });
     
-    return this.generateToken(user._id.toString(), user.email);
+    const tokenData = this.generateToken(user._id.toString(), user.email);
+    return {
+      ...tokenData,
+      name: user.name, // Return the user's real name
+    };
   }
 
   async login(email: string, pass: string) {
@@ -33,7 +37,11 @@ export class AuthService {
       throw new UnauthorizedException('Invalid credentials');
     }
 
-    return this.generateToken(user._id.toString(), user.email);
+    const tokenData = this.generateToken(user._id.toString(), user.email);
+    return {
+      ...tokenData,
+      name: user.name, // Return the user's real name on login
+    };
   }
 
   private generateToken(userId: string, email: string) {
