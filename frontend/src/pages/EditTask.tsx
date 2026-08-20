@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { useNavigate, useParams, Link } from 'react-router-dom';
-import axios from 'axios';
+import API from '../api/axios'; // <-- Updated to use central API instance
 import toast from 'react-hot-toast';
 import Navbar from '../components/Navbar';
 
@@ -11,11 +11,10 @@ export default function EditTask() {
   const [title, setTitle] = useState('');
   const [description, setDescription] = useState('');
   const [priority, setPriority] = useState('MEDIUM');
-  const [status, setStatus] = useState('PENDING'); // Added Status
+  const [status, setStatus] = useState('PENDING');
   const [location, setLocation] = useState('');
   const [dueDate, setDueDate] = useState('');
   
-  // Added File Upload State
   const [file, setFile] = useState<File | null>(null);
   const [currentFileUrl, setCurrentFileUrl] = useState('');
 
@@ -26,7 +25,7 @@ export default function EditTask() {
     const fetchTask = async () => {
       try {
         const token = localStorage.getItem('token');
-        const response = await axios.get(`http://localhost:3000/tasks/${id}`, {
+        const response = await API.get(`/tasks/${id}`, {
           headers: { Authorization: `Bearer ${token}` },
         });
         
@@ -57,8 +56,8 @@ export default function EditTask() {
     
     try {
       const token = localStorage.getItem('token');
-      await axios.patch(
-        `http://localhost:3000/tasks/${id}`,
+      await API.patch(
+        `/tasks/${id}`,
         { title, description, priority, status, location, dueDate },
         { headers: { Authorization: `Bearer ${token}` } }
       );
@@ -68,8 +67,8 @@ export default function EditTask() {
         toast.loading('Uploading new attachment...', { id: loadingToast });
         const formData = new FormData();
         formData.append('file', file);
-        await axios.post(
-          `http://localhost:3000/tasks/${id}/upload`,
+        await API.post(
+          `/tasks/${id}/upload`,
           formData,
           {
             headers: {
@@ -114,7 +113,6 @@ export default function EditTask() {
       <main className="mx-auto max-w-2xl px-6 pt-10">
         <div className="relative rounded-[2rem] bg-white p-8 md:p-10 shadow-[0_20px_60px_-15px_rgba(0,0,0,0.05)] border border-white/50 overflow-hidden">
           
-          {/* Decorative Background Blur (Emerald for Edit Mode) */}
           <div className="absolute -top-24 -right-24 h-48 w-48 rounded-full bg-emerald-600/5 blur-[80px] pointer-events-none"></div>
 
           <div className="relative z-10 mb-8 flex items-center justify-between border-b border-gray-100 pb-6">
@@ -209,7 +207,6 @@ export default function EditTask() {
 
             </div>
 
-            {/* Premium File Upload Area */}
             <div className="space-y-1.5 pt-2">
               <label className="text-[10px] font-bold uppercase tracking-wider text-gray-500 ml-1">Update Media (Optional)</label>
               <div className={`relative flex flex-col items-center justify-center w-full rounded-2xl border-2 border-dashed ${file ? 'border-emerald-400 bg-emerald-50/30' : 'border-gray-200 bg-gray-50/50'} px-4 py-8 transition-all hover:bg-gray-50 hover:border-emerald-300 group`}>

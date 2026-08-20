@@ -1,7 +1,7 @@
 import { useContext, useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { AuthContext } from '../context/AuthContext';
-import axios from 'axios';
+import API from '../api/axios'; // <-- Updated to use central API instance
 import toast from 'react-hot-toast';
 
 interface NavbarProps {
@@ -14,7 +14,7 @@ export default function Navbar({ searchTerm = '', onSearch }: NavbarProps) {
   const [isProfileOpen, setIsProfileOpen] = useState(false);
   const [isSettingsOpen, setIsSettingsOpen] = useState(false);
   
-  // --- NEW: Email Notifications State ---
+  // --- Email Notifications State ---
   const [emailNotifs, setEmailNotifs] = useState(true);
 
   // Load the preference from LocalStorage on mount
@@ -42,7 +42,7 @@ export default function Navbar({ searchTerm = '', onSearch }: NavbarProps) {
     setIsSettingsOpen(true);
   };
 
-  // --- NEW: Toggle Function ---
+  // --- Toggle Function ---
   const toggleNotifications = async () => {
     const newState = !emailNotifs;
     setEmailNotifs(newState);
@@ -50,7 +50,7 @@ export default function Navbar({ searchTerm = '', onSearch }: NavbarProps) {
 
     try {
       const token = localStorage.getItem('token');
-      await axios.patch('http://localhost:3000/users/settings/notifications', 
+      await API.patch('/users/settings/notifications', 
         { enabled: newState },
         { headers: { Authorization: `Bearer ${token}` } }
       );
@@ -194,10 +194,8 @@ export default function Navbar({ searchTerm = '', onSearch }: NavbarProps) {
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-slate-900/40 p-4 backdrop-blur-md transition-all duration-300">
           <div className="relative w-full max-w-md rounded-[2rem] bg-white p-8 shadow-[0_20px_60px_-15px_rgba(0,0,0,0.1)] border border-gray-100/50 overflow-hidden">
             
-            {/* Background Accent */}
             <div className="absolute top-0 left-0 w-full h-32 bg-gradient-to-br from-blue-600 to-indigo-600"></div>
 
-            {/* Close Button */}
             <button 
               onClick={() => setIsSettingsOpen(false)}
               className="absolute right-4 top-4 flex h-8 w-8 items-center justify-center rounded-full bg-white/20 text-white backdrop-blur-md transition-all hover:bg-white/30 active:scale-95"
@@ -207,7 +205,6 @@ export default function Navbar({ searchTerm = '', onSearch }: NavbarProps) {
               </svg>
             </button>
 
-            {/* Profile Content */}
             <div className="relative z-10 flex flex-col items-center mt-12 text-center">
               <div className="flex h-24 w-24 items-center justify-center rounded-full border-4 border-white bg-gradient-to-tr from-gray-800 to-gray-600 text-3xl font-bold text-white shadow-lg">
                 {userInitial}
@@ -216,7 +213,6 @@ export default function Navbar({ searchTerm = '', onSearch }: NavbarProps) {
               <p className="text-sm font-medium text-gray-500">{userEmail}</p>
             </div>
 
-            {/* Settings List */}
             <div className="mt-8 space-y-4">
               <div className="flex items-center justify-between rounded-2xl bg-gray-50 p-4 border border-gray-100">
                 <div className="flex items-center gap-3">
@@ -231,14 +227,12 @@ export default function Navbar({ searchTerm = '', onSearch }: NavbarProps) {
                   </div>
                 </div>
                 
-                {/* --- Interactive Toggle --- */}
                 <button 
                   onClick={toggleNotifications}
                   className={`h-6 w-11 rounded-full relative transition-all duration-300 ${emailNotifs ? 'bg-blue-600' : 'bg-gray-300'}`}
                 >
                   <div className={`absolute top-1 h-4 w-4 rounded-full bg-white transition-all duration-300 shadow-sm ${emailNotifs ? 'right-1' : 'left-1'}`}></div>
                 </button>
-                {/* ---------------------------- */}
               </div>
 
               <div className="flex items-center justify-between rounded-2xl bg-gray-50 p-4 border border-gray-100">

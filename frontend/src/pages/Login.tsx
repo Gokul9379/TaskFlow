@@ -1,7 +1,7 @@
 import { useState, useContext } from 'react';
 import { Link } from 'react-router-dom';
-import axios from 'axios';
-import { AuthContext } from '../context/AuthContext'; // <-- Import our new context
+import API from '../api/axios'; // <-- Updated to use central API instance
+import { AuthContext } from '../context/AuthContext';
 
 export default function Login() {
   const [email, setEmail] = useState('');
@@ -16,7 +16,7 @@ export default function Login() {
     setError('');
 
     try {
-      const response = await axios.post('http://localhost:3000/auth/login', {
+      const response = await API.post('/auth/login', {
         email,
         password,
       });

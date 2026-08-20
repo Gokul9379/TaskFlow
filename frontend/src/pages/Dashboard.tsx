@@ -1,7 +1,7 @@
 import toast from 'react-hot-toast';
 import { useState, useEffect, useContext } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
-import axios from 'axios';
+import API from '../api/axios'; // <-- Updated to use central API instance
 import Navbar from '../components/Navbar';
 import TaskCard from '../components/TaskCard';
 import TaskDetailModal from '../components/TaskDetailModal';
@@ -46,7 +46,7 @@ export default function Dashboard() {
       const token = localStorage.getItem('token');
 
       try {
-        const response = await axios.get('http://localhost:3000/tasks', {
+        const response = await API.get('/tasks', {
           headers: { Authorization: `Bearer ${token}` },
           params: {
             page,
@@ -83,7 +83,7 @@ export default function Dashboard() {
     const loadingToast = toast.loading('Deleting task...');
     try {
       const token = localStorage.getItem('token');
-      await axios.delete(`http://localhost:3000/tasks/${taskId}`, {
+      await API.delete(`/tasks/${taskId}`, {
         headers: { Authorization: `Bearer ${token}` },
       });
       setTasks(tasks.filter(task => task._id !== taskId));
@@ -146,7 +146,7 @@ export default function Dashboard() {
     e.stopPropagation();
     try {
       const token = localStorage.getItem('token');
-      await axios.patch(`http://localhost:3000/tasks/${taskId}`, 
+      await API.patch(`/tasks/${taskId}`, 
         { status: newStatus }, 
         { headers: { Authorization: `Bearer ${token}` } }
       );
@@ -208,7 +208,7 @@ export default function Dashboard() {
           )}
         </div>
 
-        {/* --- UPGRADED, RESPONSIVE CONTROL BAR --- */}
+        {/* --- CONTROL BAR --- */}
         <div className="mb-8 rounded-3xl bg-white p-4 shadow-[0_4px_20px_rgb(0,0,0,0.02)] border border-gray-100">
           <div className="grid grid-cols-2 gap-4 md:flex md:flex-wrap md:items-end md:gap-3">
             

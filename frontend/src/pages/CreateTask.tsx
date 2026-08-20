@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
-import axios from 'axios';
+import API from '../api/axios'; // <-- Updated to use central API instance
 import toast from 'react-hot-toast';
 import Navbar from '../components/Navbar';
 
@@ -23,8 +23,8 @@ export default function CreateTask() {
     const token = localStorage.getItem('token');
 
     try {
-      const taskResponse = await axios.post(
-        'http://localhost:3000/tasks',
+      const taskResponse = await API.post(
+        '/tasks',
         { title, description, priority, location, dueDate, status: 'PENDING' },
         { headers: { Authorization: `Bearer ${token}` } }
       );
@@ -36,8 +36,8 @@ export default function CreateTask() {
         const formData = new FormData();
         formData.append('file', file);
 
-        await axios.post(
-          `http://localhost:3000/tasks/${newTaskId}/upload`,
+        await API.post(
+          `/tasks/${newTaskId}/upload`,
           formData,
           {
             headers: {
